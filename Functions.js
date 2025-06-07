@@ -334,3 +334,4 @@ async function fetchAllSpendGroupFundsLogs() {
     log(`🕵共获取到${allData.length}条记录`, "success")
     console.table(allData); // 可视化输出表格
 }
+
