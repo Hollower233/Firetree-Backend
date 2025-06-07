@@ -20,7 +20,6 @@
 
 (function() {
     'use strict';
-    alert(group_id)
     clear_page()
     // 函数区
     
@@ -58,9 +57,10 @@
     const settingsLink = createNavLink('设置');
     const auditLink = createNavLink("下载审计表")
 
-    auditLink.addEventListener("click", fetchAllSpendGroupFundsLogs)
+    
     nav.appendChild(homeLink);
     nav.appendChild(settingsLink);
+    nav.appendChild(auditLink)
     windowDiv.appendChild(nav);
 
     // 创建内容容器
@@ -88,7 +88,7 @@
     let currentPage = 'home';
     homeLink.addEventListener('click', () => switchPage('home'));
     settingsLink.addEventListener('click', () => switchPage('settings'));
-
+    auditLink.addEventListener("click", fetchAllSpendGroupFundsLogs)
     function switchPage(page) {
         if (currentPage === page) return;
         currentPage = page;
