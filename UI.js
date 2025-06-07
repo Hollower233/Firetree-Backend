@@ -1,20 +1,19 @@
-
 const windowDiv = document.createElement('div');
 windowDiv.style.cssText = `
-position: fixed;
-top: 50%;
-left: 50%;
-transform: translate(-50%, -50%);
-width: 300px;             /* 宽度不变 */
-height: 500px;            /* 新增高度，变高一点，形成竖向长条 */
-background: #1e1e1e;
-border: 1px solid #333;
-z-index: 10000;
-padding: 10px;
-box-shadow: 0 0 10px rgba(0,0,0,0.5);
-font-family: Arial, sans-serif;
-color: #ffffff;
-overflow: auto;           /* 可选：内容过多时自动滚动 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;             /* 宽度不变 */
+    height: 500px;            /* 新增高度，变高一点，形成竖向长条 */
+    background: #1e1e1e;
+    border: 1px solid #333;
+    z-index: 10000;
+    padding: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    font-family: Arial, sans-serif;
+    color: #ffffff;
+    overflow: auto;           /* 可选：内容过多时自动滚动 */
 `;
 
 // 创建导航栏
@@ -26,6 +25,22 @@ nav.style.cssText = `
     border-bottom: 1px solid #333;
     padding-bottom: 5px;
 `;
+
+function createNavLink(text) {
+    const link = document.createElement('a');
+    link.href = '#';
+    link.textContent = text;
+    link.style.cssText = `
+        cursor: pointer;
+        text-decoration: none;
+        color: #00afff;
+        transition: color 0.2s;
+    `;
+    link.addEventListener('hover', () => {
+        link.style.color = '#00ddff';
+    });
+    return link;
+}
 
 const homeLink = createNavLink('主页');
 const settingsLink = createNavLink('设置');
@@ -40,6 +55,49 @@ windowDiv.appendChild(nav);
 // 创建内容容器
 const contentDiv = document.createElement('div');
 
+function createHomeContent() {
+    const element = document.createElement('div');
+    const inputs = {};
+    const buttons = {};
+    const status = document.createElement('pre');
+
+    // 收款人输入框
+    inputs.recipient = createInput('收款人', 'text');
+    element.appendChild(inputs.recipient);
+
+    // Robux数量输入框
+    inputs.robux = createInput('Robux数量', 'number', '0');
+    element.appendChild(inputs.robux);
+
+    // 人民币收款输入框
+    inputs.rmb = createInput('人民币收款￥', 'number', '0');
+    element.appendChild(inputs.rmb);
+
+    // 发送按钮
+    buttons.send = createButton('发送Robux');
+    buttons.send.disabled = true;
+    element.appendChild(buttons.send);
+
+    // 状态输出区
+    status.style.cssText = `
+        position: absolute;
+        left: 10px;
+        right: 9px;
+        top: 236px;              /* 根据你上面的内容调整 */
+        bottom: 10px;
+        overflow-y: auto;
+        background: #2a2a2a;
+        padding: 5px;
+        white-space: pre-wrap;
+        font-size: 0.9em;
+        color: #00ffaa;
+        border: 1px solid #444;
+    `;
+    element.appendChild(status);
+
+    return { element, inputs, buttons, status };
+}
+
 // 主页内容
 const homeContent = createHomeContent();
 const recipientInput = homeContent.inputs.recipient;
@@ -48,6 +106,31 @@ const rmbInput = homeContent.inputs.rmb
 const sendButton = homeContent.buttons.send;
 const statusOutput = homeContent.status;
 
+function createSettingsContent() {
+    const element = document.createElement('div');
+    const inputs = {};
+    const buttons = {};
+    const status = document.createElement('div');
+
+    // 密码框
+    inputs.password = createInput('2FA密码', 'password');
+    element.appendChild(inputs.password);
+
+    // 保存按钮
+    buttons.save = createButton('保存');
+    element.appendChild(buttons.save);
+
+    // 状态提示
+    status.style.cssText = `
+        margin-top: 10px;
+        height: 20px;
+        font-size: 0.9em;
+        color: #00ffaa;
+    `;
+    element.appendChild(status);
+
+    return { element, inputs, buttons, status };
+}
 // 设置内容
 const settingsContent = createSettingsContent();
 
@@ -111,90 +194,11 @@ settingsContent.buttons.save.addEventListener('click', () => {
 });
 
 // 辅助函数
-function createNavLink(text) {
-    const link = document.createElement('a');
-    link.href = '#';
-    link.textContent = text;
-    link.style.cssText = `
-        cursor: pointer;
-        text-decoration: none;
-        color: #00afff;
-        transition: color 0.2s;
-    `;
-    link.addEventListener('hover', () => {
-        link.style.color = '#00ddff';
-    });
-    return link;
-}
 
-function createHomeContent() {
-    const element = document.createElement('div');
-    const inputs = {};
-    const buttons = {};
-    const status = document.createElement('pre');
 
-    // 收款人输入框
-    inputs.recipient = createInput('收款人', 'text');
-    element.appendChild(inputs.recipient);
 
-    // Robux数量输入框
-    inputs.robux = createInput('Robux数量', 'number', '0');
-    element.appendChild(inputs.robux);
 
-    // 人民币收款输入框
-    inputs.rmb = createInput('人民币收款￥', 'number', '0');
-    element.appendChild(inputs.rmb);
 
-    // 发送按钮
-    buttons.send = createButton('发送Robux');
-    buttons.send.disabled = true;
-    element.appendChild(buttons.send);
-
-    // 状态输出区
-    status.style.cssText = `
-        position: absolute;
-        left: 10px;
-        right: 9px;
-        top: 236px;              /* 根据你上面的内容调整 */
-        bottom: 10px;
-        overflow-y: auto;
-        background: #2a2a2a;
-        padding: 5px;
-        white-space: pre-wrap;
-        font-size: 0.9em;
-        color: #00ffaa;
-        border: 1px solid #444;
-    `;
-    element.appendChild(status);
-
-    return { element, inputs, buttons, status };
-}
-
-function createSettingsContent() {
-    const element = document.createElement('div');
-    const inputs = {};
-    const buttons = {};
-    const status = document.createElement('div');
-
-    // 密码框
-    inputs.password = createInput('2FA密码', 'password');
-    element.appendChild(inputs.password);
-
-    // 保存按钮
-    buttons.save = createButton('保存');
-    element.appendChild(buttons.save);
-
-    // 状态提示
-    status.style.cssText = `
-        margin-top: 10px;
-        height: 20px;
-        font-size: 0.9em;
-        color: #00ffaa;
-    `;
-    element.appendChild(status);
-
-    return { element, inputs, buttons, status };
-}
 
 function createInput(placeholder, type, min = '') {
     const input = document.createElement('input');
