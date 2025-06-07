@@ -15,7 +15,6 @@
 // @grant        unsafeWindow
 // @require      https://unpkg.com/@otplib/preset-browser@^12.0.0/buffer.js
 // @require      https://unpkg.com/@otplib/preset-browser@^12.0.0/index.js
-// @require https://raw.githubusercontent.com/Hollower233/Firetree-Backend/refs/heads/main/lib.js 
 // @connect      roblox.com
 // @connect      notion.com
 
