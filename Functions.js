@@ -100,17 +100,16 @@ function parse_response_text_to_json(responseText){
         return {}
     }
 }
-function send_request(link, headers, jsonData, method) {
+function send_request(link, headers, jsonData) {
     const json_string = JSON.stringify(jsonData);
-    method_name = method || "POST"
     console.warn(link, {
         headers: headers,
         json: jsonData,
-    }, method_name);
+    }, ["POST Request"]);
 
     return new Promise((resolve, reject) => {
         GM_xmlhttpRequest({
-            method: method_name,
+            method: "POST",
             url: link,
             headers: headers,
             data: json_string,
@@ -305,6 +304,69 @@ function log(message, state) {
     addToStatus(message, statusOutput);
 }
 
+/**
+ * 封装 GM_xmlhttpRequest 为 async/await 风格的 GET 请求
+ * @param {string} link - 请求地址
+ * @param {Object} [headers={}] - 请求头
+ * @returns {Promise<Object>} 返回响应对象
+ */
+async function get_request(link, headers) {
+    console.warn(link, {
+        headers: headers,
+    }, ["GET Request"]);
+
+    return new Promise((resolve, reject) => {
+        GM_xmlhttpRequest({
+            method: 'GET',
+            url: link,
+            headers: headers,
+            onload: function (response) {
+                const result = {
+                    status_code: response.status,
+                    json: parse_response_text_to_json(response.responseText)
+                };
+                console.warn(link, result, "[GET Response]")
+                resolve(result)
+            },
+        });
+    });
+}
+    function flattenAuditLog(data) {
+    return data.map(item => ({
+        ActorUsername: item.actor.user.username,
+        ActorDisplayName: item.actor.user.displayName,
+        RoleName: item.actor.role.name,
+        ActionType: item.actionType,
+        Amount: item.description.Amount,
+        ItemDescription: item.description.ItemDescription,
+        Created: item.created
+    }));
+}
+function convertToCSV(data) {
+    if (!data || data.length === 0) return '';
+
+    const headers = Object.keys(data[0]).join(',');
+    const rows = data.map(obj => {
+        return Object.values(obj).map(value => {
+            // 如果值中包含逗号，加引号防止 CSV 错乱
+            if (typeof value === 'string' && value.includes(',')) {
+                return `"${value}"`;
+            }
+            return value;
+        }).join(',');
+    });
+
+    return [headers, ...rows].join('\n');
+}
+    function downloadCSV(csv, filename = 'audit_log.csv') {
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); // 清理 DOM
+}
 async function fetchAllSpendGroupFundsLogs() {
     const baseUrl = `https://groups.roblox.com/v1/groups/${group_id}/audit-log`; 
     const actionType = 'spendGroupFunds';
@@ -316,24 +378,25 @@ async function fetchAllSpendGroupFundsLogs() {
     let index = 0
     const securityCookie = await get_security_cookie();
     const cookieHeaders = getCookieHeaders(securityCookie);
-    const headers = get_csrf_headers(cookieHeaders)
-    // const csrfHeaders = await get_csrf_headers(cookieHeaders);
+
     do {
         index += 1
         let url = `${baseUrl}?actionType=${actionType}&limit=${limit}&sortOrder=${sortOrder}`;
         if (cursor) {
-            url += `&cursor=${encodeURIComponent(cursor)}`;
+            url += `&cursor=${cursor}`;
         }
         log(`🕵正在下载审计表${index}`, "waiting")
-        const response = await send_request(url, headers, {}, "GET")
+        const response = await get_request(url, cookieHeaders)
         log(`🕵审计表${index}已下载`, "success")
-        if (response.data && Array.isArray(response.data)) {
-            allData = allData.concat(response.data);
-        }
 
-        cursor = response.nextPageCursor;
+        const response_json = response.json
+
+        allData = allData.concat(response_json.data)
+
+        cursor = response_json.nextPageCursor;
     } while (cursor !== null && cursor !== undefined);
     log(`🕵共获取到${allData.length}条记录`, "success")
-    console.table(allData); // 可视化输出表格
+     const csv = convertToCSV(flattenAuditLog(allData))
+    downloadCSV(csv)
 }
 
