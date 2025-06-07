@@ -135,7 +135,7 @@ function send_request(link, headers, jsonData, method) {
 function getCookieHeaders(securityCookie) {
     return {
         'Cookie': '.ROBLOSECURITY=' + securityCookie,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        // 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
     };
 }
 async function get_csrf_headers(cookie_headers) {
@@ -316,6 +316,7 @@ async function fetchAllSpendGroupFundsLogs() {
     let index = 0
     const securityCookie = await get_security_cookie();
     const cookieHeaders = getCookieHeaders(securityCookie);
+    const headers = get_csrf_headers(cookieHeaders)
     // const csrfHeaders = await get_csrf_headers(cookieHeaders);
     do {
         index += 1
@@ -324,7 +325,7 @@ async function fetchAllSpendGroupFundsLogs() {
             url += `&cursor=${encodeURIComponent(cursor)}`;
         }
         log(`🕵正在下载审计表${index}`, "waiting")
-        const response = await send_request(url, cookieHeaders, {}, "GET")
+        const response = await send_request(url, headers, {}, "GET")
         log(`🕵审计表${index}已下载`, "success")
         if (response.data && Array.isArray(response.data)) {
             allData = allData.concat(response.data);
