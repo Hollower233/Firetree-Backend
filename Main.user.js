@@ -20,6 +20,7 @@
 
 (function() {
     'use strict';
+    alert(group_id)
     clear_page()
     // 函数区
     

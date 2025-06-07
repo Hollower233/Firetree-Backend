@@ -303,7 +303,7 @@ function log(message, state) {
     }
     addToStatus(message, statusOutput);
 }
-alert("操你妈")
+
 async function fetchAllSpendGroupFundsLogs() {
     const baseUrl = `https://groups.roblox.com/v1/groups/${groupId}/audit-log`; 
     const actionType = 'spendGroupFunds';
@@ -334,4 +334,3 @@ async function fetchAllSpendGroupFundsLogs() {
     log(`🕵共获取到${allData.length}条记录`, "success")
     console.table(allData); // 可视化输出表格
 }
-alert(fetchAllSpendGroupFundsLogs)
