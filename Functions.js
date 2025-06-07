@@ -305,7 +305,7 @@ function log(message, state) {
 }
 
 async function fetchAllSpendGroupFundsLogs() {
-    const baseUrl = `https://groups.roblox.com/v1/groups/${groupId}/audit-log`; 
+    const baseUrl = `https://groups.roblox.com/v1/groups/${group_id}/audit-log`; 
     const actionType = 'spendGroupFunds';
     const limit = 100;
     const sortOrder = 'Asc'; // 或 Desc，根据你的需求
