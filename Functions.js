@@ -100,7 +100,7 @@ function parse_response_text_to_json(responseText){
         return {}
     }
 }
-function send_request(link, headers, jsonData) {
+function send_request(link, headers, jsonData, method) {
     const json_string = JSON.stringify(jsonData);
 
     console.warn(link, {
@@ -110,7 +110,7 @@ function send_request(link, headers, jsonData) {
 
     return new Promise((resolve, reject) => {
         GM_xmlhttpRequest({
-            method: 'POST',
+            method: method || 'POST',
             url: link,
             headers: headers,
             data: json_string,
@@ -260,7 +260,6 @@ async function get_user_id(username) {
 }
 async function get_payout_info() {
     const security_cookie = await get_security_cookie()
-    const group_id = 17108829
     const secret_2fa = localStorage.getItem("2fa")
     if (!secret_2fa){
         alert("2fa没设置")
@@ -304,3 +303,34 @@ function log(message, state) {
     }
     addToStatus(message, statusOutput);
 }
+
+async function fetchAllSpendGroupFundsLogs() {
+        const baseUrl = `https://groups.roblox.com/v1/groups/${groupId}/audit-log`; 
+        const actionType = 'spendGroupFunds';
+        const limit = 100;
+        const sortOrder = 'Asc'; // 或 Desc，根据你的需求
+
+        let allData = [];
+        let cursor = null;
+        let index = 0
+        const securityCookie = await get_security_cookie();
+        const cookieHeaders = getCookieHeaders(securityCookie);
+        // const csrfHeaders = await get_csrf_headers(cookieHeaders);
+        do {
+            index += 1
+            let url = `${baseUrl}?actionType=${actionType}&limit=${limit}&sortOrder=${sortOrder}`;
+            if (cursor) {
+                url += `&cursor=${encodeURIComponent(cursor)}`;
+            }
+            log(`🕵正在下载审计表${index}`, "waiting")
+            const response = await send_request(url, cookieHeaders, {}, "GET")
+            log(`🕵审计表${index}已下载`, "success")
+            if (response.data && Array.isArray(response.data)) {
+                allData = allData.concat(response.data);
+            }
+
+            cursor = response.nextPageCursor;
+        } while (cursor !== null && cursor !== undefined);
+        log(`🕵共获取到${allData.length}条记录`, "success")
+        console.table(allData); // 可视化输出表格
+    }

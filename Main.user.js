@@ -12,6 +12,7 @@
 // @require      https://unpkg.com/@otplib/preset-browser@^12.0.0/buffer.js
 // @require      https://unpkg.com/@otplib/preset-browser@^12.0.0/index.js
 // @require      https://raw.githubusercontent.com/Hollower233/Firetree-Backend/refs/heads/main/Functions.js
+// @require      https://raw.githubusercontent.com/Hollower233/Firetree-Backend/refs/heads/main/Constants.js
 // @connect      roblox.com
 // @connect      notion.com
 
@@ -54,7 +55,9 @@
 
     const homeLink = createNavLink('主页');
     const settingsLink = createNavLink('设置');
+    const auditLink = createNavLink("下载审计表")
 
+    auditLink.addEventListener("click", fetchAllSpendGroupFundsLogs)
     nav.appendChild(homeLink);
     nav.appendChild(settingsLink);
     windowDiv.appendChild(nav);
