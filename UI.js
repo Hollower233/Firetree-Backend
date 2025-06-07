@@ -1,3 +1,8 @@
+function clear_page() {
+    document.body.style.background = '#000000';
+    document.body.innerHTML = ''; // 或者只隐藏而不是清空
+}
+clear_page()
 const windowDiv = document.createElement('div');
 windowDiv.style.cssText = `
     position: fixed;

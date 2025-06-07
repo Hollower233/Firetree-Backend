@@ -21,5 +21,4 @@
 
 (function() {
     'use strict';
-    // clear_page()
 })();

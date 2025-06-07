@@ -102,15 +102,15 @@ function parse_response_text_to_json(responseText){
 }
 function send_request(link, headers, jsonData, method) {
     const json_string = JSON.stringify(jsonData);
-
+    method_name = method || "POST"
     console.warn(link, {
         headers: headers,
         json: jsonData,
-    }, "[POST Request]");
+    }, method_name);
 
     return new Promise((resolve, reject) => {
         GM_xmlhttpRequest({
-            method: method || 'POST',
+            method: method_name,
             url: link,
             headers: headers,
             data: json_string,
