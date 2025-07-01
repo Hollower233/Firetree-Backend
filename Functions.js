@@ -331,15 +331,17 @@ async function get_request(link, headers) {
         });
     });
 }
-    function flattenAuditLog(data) {
-    return data.map(item => ({
-        ActorUsername: item.actor.user.username,
-        ActorDisplayName: item.actor.user.displayName,
-        RoleName: item.actor.role.name,
-        ActionType: item.actionType,
-        Amount: item.description.Amount,
-        ItemDescription: item.description.ItemDescription,
-        Created: item.created
+function flattenAuditLog(data) {
+return data
+    .filter(item => item !== undefined && item !== null) // Remove undefined/null entries
+    .map(item => ({
+        ActorUsername: item.actor?.user?.username ?? 'Unknown',
+        ActorDisplayName: item.actor?.user?.displayName ?? 'Unknown',
+        RoleName: item.actor?.role?.name ?? 'Unknown',
+        ActionType: item.actionType ?? 'Unknown',
+        Amount: item.description?.Amount ?? 0,
+        ItemDescription: item.description?.ItemDescription ?? 'No Description',
+        Created: item.created ?? 'Unknown Date'
     }));
 }
 function convertToCSV(data) {
