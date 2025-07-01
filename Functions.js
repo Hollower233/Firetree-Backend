@@ -396,6 +396,7 @@ async function fetchAllSpendGroupFundsLogs() {
         cursor = response_json.nextPageCursor;
     } while (cursor !== null && cursor !== undefined);
     log(`🕵共获取到${allData.length}条记录`, "success")
+    console.log(allData)
      const csv = convertToCSV(flattenAuditLog(allData))
     downloadCSV(csv)
 }
