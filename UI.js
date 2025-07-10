@@ -120,7 +120,17 @@ function createSettingsContent() {
     // 密码框
     inputs.password = createInput('2FA密码', 'password');
     element.appendChild(inputs.password);
+    // 群组ID
+    inputs.group_id = createInput('群组ID', 'text');
+    element.appendChild(inputs.group_id);
 
+    // Notion API Key（隐藏输入）
+    inputs.notion_api_key = createInput('Notion API Key', 'password');
+    element.appendChild(inputs.notion_api_key);
+
+    // Notion Database ID
+    inputs.notion_database_id = createInput('Notion Database ID', 'text');
+    element.appendChild(inputs.notion_database_id);
     // 保存按钮
     buttons.save = createButton('保存');
     element.appendChild(buttons.save);
@@ -190,12 +200,21 @@ sendButton.addEventListener('click', () => {
 // 保存设置
 settingsContent.buttons.save.addEventListener('click', () => {
     const password = settingsContent.inputs.password.value.trim();
+    const group_id = settingsContent.inputs.group_id.value.trim();
+    const notion_api_key = settingsContent.inputs.notion_api_key.value.trim();
+    const notion_database_id = settingsContent.inputs.notion_database_id.value.trim();
+
     if (!password) {
-        showSettingsStatus('请输入密码', settingsContent.status);
+        showSettingsStatus('请输入2FA密码', settingsContent.status);
         return;
     }
+
     localStorage.setItem('2fa', password);
-    showSettingsStatus('2FA密码已保存', settingsContent.status);
+    localStorage.setItem('group_id', group_id);
+    localStorage.setItem('notion_api_key', notion_api_key);
+    localStorage.setItem('notion_database_id', notion_database_id);
+
+    showSettingsStatus('设置已保存', settingsContent.status);
 });
 
 // 辅助函数

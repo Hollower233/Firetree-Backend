@@ -1,1 +1,0 @@
-const group_id = 17108829

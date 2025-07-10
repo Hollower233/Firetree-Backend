@@ -67,8 +67,12 @@ function notion_field(type, value) {
 }
 async function log_to_google_sheet(payout_info) {
     const link = "https://api.notion.com/v1/pages"
-    const notion_api_key = "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"
-    const notion_database_id = "20aefc53b30e80f48024de211d7d89ab"
+    const notion_api_key = localStorage.getItem("notion_api_key")
+    const notion_database_id = localStorage.getItem("notion_database_id")
+    if (!notion_api_key){
+        log("📈未配置Notion数据库，跳过记账", "failed")
+        return
+    }
     log("📈正在记账", "waiting")
     const response = await send_request(link, {
         'Authorization': `Bearer ${notion_api_key}`,
@@ -271,7 +275,7 @@ async function get_payout_info() {
     return {
         "security_cookie" : security_cookie,
         "secret_2fa": secret_2fa,
-        "group_id": group_id,
+        "group_id": localStorage.getItem("group_id"),
         "user_id": user_id,
         "robux_amount": localStorage.getItem("payout_amount"),
         "user_name" : username,
